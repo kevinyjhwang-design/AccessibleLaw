@@ -427,5 +427,15 @@ def search():
     return jsonify({"results": results[:12]})
 
 
+def auto_seed():
+    """Create tables and seed data if the database is empty."""
+    db.create_all()
+    if Category.query.first() is None:
+        import seed_data
+        seed_data.seed(db, Category, Law, CaseStory, Guide)
+
+with app.app_context():
+    auto_seed()
+
 if __name__ == "__main__":
     app.run(debug=True, port=5050)
