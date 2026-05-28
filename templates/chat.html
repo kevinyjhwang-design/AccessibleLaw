@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Ask Lex AI — Accessible Law{% endblock %}
+{% block body_class %}chat-page{% endblock %}
+
+{% block content %}
+<div class="chat-layout" aria-label="AI Legal Companion">
+
+  <aside class="chat-sidebar">
+    <div class="chat-brand">
+      <div class="lex-avatar-block" aria-hidden="true">LEX</div>
+      <div class="lex-label">
+        <strong>Lex</strong>
+        <span class="lex-status">AI Legal Companion</span>
+      </div>
+    </div>
+
+    <div class="chat-info-card">
+      <h2>What Lex can help with</h2>
+      <ul>
+        <li>Understanding your rights</li>
+        <li>Explaining legal terms simply</li>
+        <li>Guiding you to the right action</li>
+        <li>Answering "is this legal?" questions</li>
+      </ul>
+    </div>
+
+    <div class="chat-disclaimer-small" role="note">
+      Lex is <strong>not a lawyer</strong>. This is legal information, not legal advice.
+    </div>
+
+    <div class="chat-quick-links">
+      <p class="ql-heading">Quick links</p>
+      <a href="/translate" class="ql-link">Translate a document</a>
+      <a href="/guides" class="ql-link">Action guides</a>
+      <a href="tel:18664564995" class="ql-link">Legal Aid Alabama</a>
+    </div>
+
+    <button class="btn-secondary btn-sm" id="clear-chat-btn" type="button">
+      Clear conversation
+    </button>
+  </aside>
+
+  <div class="chat-window">
+    <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Chat messages">
+
+      {% if not ai_enabled %}
+      <div class="msg msg-system" role="alert">
+        <strong>AI not configured.</strong>
+        Set the <code>ANTHROPIC_API_KEY</code> environment variable to enable Lex.
+        You can still browse <a href="/guides">Action Guides</a> or <a href="/laws">Alabama Laws</a>.
+      </div>
+      {% endif %}
+
+      <div class="msg msg-lex" id="welcome-msg">
+        <div class="msg-avatar" aria-hidden="true">AI</div>
+        <div class="msg-bubble">
+          <p>Hi, I'm <strong>Lex</strong>, your AI legal companion. I'm here to help you understand your rights in plain English.</p>
+          <p>What's going on? Describe your situation in your own words — no legal jargon needed.</p>
+          <div class="starter-prompts" aria-label="Suggested questions">
+            <button class="starter" type="button">My landlord won't fix my heat</button>
+            <button class="starter" type="button">My boss hasn't paid me</button>
+            <button class="starter" type="button">I got an eviction notice</button>
+            <button class="starter" type="button">Can police search my car?</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <form class="chat-input-bar" id="chat-form" aria-label="Send a message">
+      <label for="chat-input" class="sr-only">Type your question</label>
+      <textarea id="chat-input" rows="1"
+        placeholder="Type your question... (Enter to send, Shift+Enter for new line)"
+        autocomplete="off" maxlength="2000"
+        {% if not ai_enabled %}disabled{% endif %}></textarea>
+      <button type="submit" class="send-btn" aria-label="Send message"
+              {% if not ai_enabled %}disabled{% endif %}>Send</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/chat.js"></script>
+{% endblock %}

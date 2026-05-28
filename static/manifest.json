@@ -1,0 +1,13 @@
+{
+  "name": "Alabama Know Your Rights",
+  "short_name": "AL Rights",
+  "description": "Plain-English guides to Alabama law — free, no lawyer required.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a3a5c",
+  "theme_color": "#1a3a5c",
+  "icons": [
+    { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

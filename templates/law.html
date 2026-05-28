@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ law.title }} — Accessible Law{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a> <span aria-hidden="true"> &rsaquo; </span>
+  <a href="/category/{{ law.category.slug }}">{{ law.category.name }}</a> <span aria-hidden="true"> &rsaquo; </span>
+  <span aria-current="page">{{ law.title }}</span>
+</nav>
+
+<article class="law-article" aria-labelledby="law-heading">
+
+  <header class="law-header">
+    <span class="cat-badge">{{ law.category.name }}</span>
+    <h1 id="law-heading">{{ law.title }}</h1>
+    {% if law.statute %}
+      <p class="law-statute-label"><strong>Alabama Law:</strong> {{ law.statute }}</p>
+    {% endif %}
+  </header>
+
+  <section class="law-block block-law" aria-labelledby="block1-heading">
+    <h2 id="block1-heading">
+      <span class="block-num" aria-hidden="true">1</span>
+      The Law <span class="block-sub">(What it says)</span>
+    </h2>
+    <blockquote class="legal-quote">
+      <p>"{{ law.legal_text }}"</p>
+    </blockquote>
+  </section>
+
+  <section class="law-block block-meaning" aria-labelledby="block2-heading">
+    <h2 id="block2-heading">
+      <span class="block-num" aria-hidden="true">2</span>
+      What It Means For You
+    </h2>
+    <p class="plain-english">{{ law.plain_english }}</p>
+    {% if steps %}
+    <div class="steps-wrap">
+      <h3>What to do:</h3>
+      <ol class="steps-list">
+        {% for step in steps %}
+        <li>{{ step }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+    {% endif %}
+  </section>
+
+  {% if consequences %}
+  <section class="law-block block-consequences" aria-labelledby="block3-heading">
+    <h2 id="block3-heading">
+      <span class="block-num" aria-hidden="true">3</span>
+      What Can Happen
+    </h2>
+    <ul class="consequence-list">
+      {% for item in consequences %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {% if law.warning %}
+  <div class="warning-box" role="alert" aria-label="Important warning">
+    <strong>Warning</strong>
+    <p>{{ law.warning }}</p>
+  </div>
+  {% endif %}
+
+  <div class="help-bar" aria-label="Get help">
+    <p>Need help with this?</p>
+    <div class="help-links">
+      <a href="tel:18664564995" class="btn-primary">Call Legal Aid Free: 1-866-456-4995</a>
+      <a href="/case-finder" class="btn-secondary">Find Similar Stories</a>
+    </div>
+  </div>
+
+</article>
+{% endblock %}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a3a5c" />
+  <meta name="description" content="Accessible Law — plain-English legal guidance, document translation, and AI legal companion." />
+  <link rel="manifest" href="/static/manifest.json" />
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  {% block head %}{% endblock %}
+  <title>{% block title %}Accessible Law{% endblock %}</title>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header role="banner">
+    <div class="header-inner">
+      <a href="/" class="brand" aria-label="Accessible Law — Home">
+        <strong>Accessible</strong>Law
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-controls="main-nav"
+              aria-expanded="false" aria-label="Open navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="main-nav" aria-label="Site navigation">
+        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+        <a href="/translate" class="nav-link {% if request.path.startswith('/translate') %}active{% endif %}">Translate</a>
+        <a href="/guides" class="nav-link {% if request.path.startswith('/guide') %}active{% endif %}">Action Guides</a>
+        <a href="/chat" class="nav-link nav-chat {% if request.path == '/chat' %}active{% endif %}">Ask Lex AI</a>
+        <a href="/laws" class="nav-link {% if request.path.startswith('/law') or request.path.startswith('/category') %}active{% endif %}">AL Laws</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" role="main" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-cols">
+        <div>
+          <p class="footer-brand">Accessible Law</p>
+          <p class="footer-tagline">Demystifying the law, empowering the public.</p>
+        </div>
+        <div>
+          <p class="footer-col-head">Tools</p>
+          <a href="/translate">Translation Engine</a>
+          <a href="/guides">Action Guides</a>
+          <a href="/chat">Ask Lex AI</a>
+          <a href="/laws">Alabama Laws</a>
+        </div>
+        <div>
+          <p class="footer-col-head">Get Real Help</p>
+          <a href="tel:18664564995">Legal Aid Alabama: 1-866-456-4995</a>
+          <a href="tel:18006506522">AL DV Hotline: 1-800-650-6522</a>
+          <a href="tel:18007997233">Nat'l DV Hotline: 1-800-799-7233</a>
+          <a href="https://alison.legislature.state.al.us/" target="_blank" rel="noopener">AL Law Source</a>
+        </div>
+      </div>
+      <div class="disclaimer" role="note" aria-label="Legal disclaimer">
+        <strong>Important:</strong>
+        This platform is for <strong>information only</strong>. It is <strong>not a lawyer</strong>
+        and does <strong>not provide legal advice</strong>. Every situation is different.
+        For serious matters, always consult a licensed attorney.
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

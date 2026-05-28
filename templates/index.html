@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Accessible Law — The Law, In Plain English{% endblock %}
+
+{% block content %}
+
+<section class="hero hero-home" aria-labelledby="hero-heading">
+  <h1 id="hero-heading">The Law, In Plain English.</h1>
+  <p class="hero-sub">
+    Upload a contract. Get a step-by-step action plan. Ask our AI anything —
+    free, private, and designed for real people.
+  </p>
+  <div class="hero-ctas">
+    <a href="/translate" class="btn-primary btn-hero">Translate a Document</a>
+    <a href="/chat" class="btn-ghost btn-hero">Ask Lex, Our AI</a>
+  </div>
+  <div class="hero-search" role="search" aria-label="Search laws and guides">
+    <label for="search-input" class="sr-only">Search for a legal topic</label>
+    <input id="search-input" type="search"
+      placeholder="Search: eviction, unpaid wages, custody..."
+      autocomplete="off" aria-autocomplete="list" aria-controls="search-results" />
+    <div id="search-results" role="listbox" aria-label="Search results" hidden></div>
+  </div>
+</section>
+
+<section class="pillars" aria-labelledby="pillars-heading">
+  <h2 id="pillars-heading" class="section-title">Three Ways We Help</h2>
+  <div class="pillar-grid">
+    <a href="/translate" class="pillar-card pillar-1">
+      <h3>Translation Engine</h3>
+      <p>Upload a lease, contract, or legal notice. We highlight key clauses and explain every one in plain English — instantly.</p>
+      <span class="pillar-cta">Translate a document &rarr;</span>
+    </a>
+    <a href="/guides" class="pillar-card pillar-2">
+      <h3>Action Guides</h3>
+      <p>Step-by-step checklists, timelines, and auto-generated letters for your specific situation — evictions, wage disputes, and more.</p>
+      <span class="pillar-cta">See all guides &rarr;</span>
+    </a>
+    <a href="/chat" class="pillar-card pillar-3">
+      <h3>Ask Lex AI</h3>
+      <p>Type your question in plain words, any time of day. Our AI legal companion listens, explains, and points you to next steps.</p>
+      <span class="pillar-cta">Start a conversation &rarr;</span>
+    </a>
+  </div>
+</section>
+
+<section class="journey" aria-labelledby="journey-heading">
+  <h2 id="journey-heading" class="section-title">How It Works Together</h2>
+  <p class="section-sub">One real-world example: a surprise rent increase.</p>
+  <ol class="journey-steps" role="list">
+    <li>
+      <span class="j-num" aria-hidden="true">1</span>
+      <div>
+        <strong>You ask Lex:</strong> "Can my landlord raise my rent 20% right now?"
+        <span class="j-tag">AI Companion</span>
+      </div>
+    </li>
+    <li>
+      <span class="j-num" aria-hidden="true">2</span>
+      <div>
+        <strong>Upload your lease</strong> — Lex highlights the rent-adjustment clause and explains it in plain English.
+        <span class="j-tag">Translation Engine</span>
+      </div>
+    </li>
+    <li>
+      <span class="j-num" aria-hidden="true">3</span>
+      <div>
+        <strong>Get your action plan:</strong> a customized tenant rights checklist and a pre-filled notice to send your landlord.
+        <span class="j-tag">Action Guide</span>
+      </div>
+    </li>
+  </ol>
+  <a href="/chat" class="btn-primary" style="margin-top:1.4rem;display:inline-block;">Try It Now &rarr;</a>
+</section>
+
+<section class="categories-section" aria-labelledby="categories-heading">
+  <h2 id="categories-heading" class="section-title">Browse Alabama Laws by Topic</h2>
+  <div class="category-grid">
+    {% for cat in categories %}
+    <a href="/category/{{ cat.slug }}" class="category-card"
+       aria-label="{{ cat.name }}: {{ cat.description }}">
+      <span class="cat-name">{{ cat.name }}</span>
+      <span class="cat-desc">{{ cat.description }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="story-match-promo" aria-labelledby="promo-heading">
+  <h2 id="promo-heading">Story Match</h2>
+  <p>Describe your situation in your own words. We'll find similar cases where people won — and tell you how they did it.</p>
+  <a href="/case-finder" class="btn-primary">Find Similar Stories</a>
+</section>
+
+{% endblock %}

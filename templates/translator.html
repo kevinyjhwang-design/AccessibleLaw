@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Translation Engine — Accessible Law{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/translator.css" />{% endblock %}
+
+{% block content %}
+<div class="translator-page">
+
+  <aside class="t-input-panel" aria-labelledby="input-heading">
+    <h1 id="input-heading" class="t-panel-title">Translation Engine</h1>
+    <p class="t-panel-sub">Upload a document or paste legal text — we'll explain every clause in plain English.</p>
+
+    {% if not ai_enabled %}
+    <div class="ai-banner ai-banner--warn" role="alert">
+      <strong>AI not configured.</strong>
+      Add your <code>ANTHROPIC_API_KEY</code> to enable live translation.
+      <a href="#" id="load-demo-btn">Load a demo &rarr;</a>
+    </div>
+    {% endif %}
+
+    <div class="input-tabs" role="tablist" aria-label="Input method">
+      <button role="tab" id="tab-upload" aria-selected="true" aria-controls="panel-upload" class="tab active">Upload File</button>
+      <button role="tab" id="tab-paste"  aria-selected="false" aria-controls="panel-paste" class="tab">Paste Text</button>
+    </div>
+
+    <div id="panel-upload" role="tabpanel" aria-labelledby="tab-upload">
+      <div class="drop-zone" id="drop-zone" tabindex="0"
+           aria-label="Drop a PDF, Word doc, or text file here, or click to browse">
+        <p>Drop a PDF, Word (.docx), or text file here</p>
+        <p class="drop-sub">or</p>
+        <label class="btn-secondary btn-sm" for="file-input">Browse files</label>
+        <input type="file" id="file-input" accept=".pdf,.docx,.doc,.txt" class="sr-only" />
+      </div>
+      <p id="file-name" class="file-name-label" hidden></p>
+    </div>
+
+    <div id="panel-paste" role="tabpanel" aria-labelledby="tab-paste" hidden>
+      <label for="text-input" class="sr-only">Paste legal text here</label>
+      <textarea id="text-input" rows="12"
+        placeholder="Paste your contract, notice, or statute here..."
+        aria-describedby="char-count"></textarea>
+      <p id="char-count" class="char-count">0 characters</p>
+    </div>
+
+    <button id="translate-btn" class="btn-primary btn-block" type="button" disabled>
+      Translate Document
+    </button>
+
+    <p class="privacy-note">Your document is never stored. It is sent securely for analysis and immediately discarded.</p>
+  </aside>
+
+  <section class="t-results-panel" aria-labelledby="results-heading" aria-live="polite">
+    <div id="results-placeholder" class="results-placeholder">
+      <p>Your plain-English translation will appear here.</p>
+    </div>
+
+    <div id="results-loading" class="results-loading" hidden aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p>Reading your document...</p>
+    </div>
+
+    <div id="results-content" hidden>
+      <h2 id="results-heading" class="t-results-title">
+        <span id="doc-type-badge" class="doc-type-badge"></span>
+        Document Summary
+      </h2>
+      <div id="summary-box" class="summary-box"></div>
+
+      <div id="red-flags-box" class="flag-box flag-box--red" hidden>
+        <h3>Red Flags</h3>
+        <ul id="red-flags-list"></ul>
+      </div>
+
+      <div id="action-items-box" class="flag-box flag-box--green" hidden>
+        <h3>Action Items</h3>
+        <ul id="action-items-list"></ul>
+      </div>
+
+      <h3 class="clauses-heading">Clause-by-Clause Breakdown</h3>
+      <div id="clauses-container"></div>
+
+      <div class="results-actions">
+        <button id="copy-btn" class="btn-secondary btn-sm">Copy Summary</button>
+        <button id="print-btn" class="btn-secondary btn-sm">Print</button>
+        <a href="/chat" class="btn-secondary btn-sm">Ask Lex a question</a>
+      </div>
+    </div>
+
+    <div id="results-error" class="results-error" hidden role="alert">
+      <p id="error-message"></p>
+      <button class="btn-secondary btn-sm" onclick="resetTranslator()">Try again</button>
+    </div>
+  </section>
+
+</div>
+
+<template id="clause-template">
+  <div class="clause-card">
+    <div class="clause-header">
+      <h4 class="clause-title"></h4>
+      <span class="risk-badge"></span>
+    </div>
+    <div class="clause-split">
+      <div class="clause-original">
+        <p class="clause-label">Original</p>
+        <p class="clause-original-text"></p>
+      </div>
+      <div class="clause-plain">
+        <p class="clause-label">Plain English</p>
+        <p class="clause-plain-text"></p>
+        <p class="clause-why"></p>
+      </div>
+    </div>
+  </div>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/translator.js"></script>
+{% endblock %}

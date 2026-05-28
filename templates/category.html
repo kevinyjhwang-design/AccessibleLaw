@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }} — Accessible Law{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a> <span aria-hidden="true"> &rsaquo; </span>
+  <a href="/laws">Alabama Laws</a> <span aria-hidden="true"> &rsaquo; </span>
+  <span aria-current="page">{{ category.name }}</span>
+</nav>
+
+<div class="page-header">
+  <h1>{{ category.name }}</h1>
+  <p class="page-sub">{{ category.description }}</p>
+</div>
+
+<section aria-labelledby="laws-heading">
+  <h2 id="laws-heading" class="sr-only">Laws in this category</h2>
+  {% for law in laws %}
+  <a href="/law/{{ law.id }}" class="law-card"
+     aria-label="{{ law.title }}{% if law.statute %} — {{ law.statute }}{% endif %}">
+    <div class="law-card-body">
+      <h3 class="law-card-title">{{ law.title }}</h3>
+      {% if law.statute %}
+        <span class="law-statute">{{ law.statute }}</span>
+      {% endif %}
+      <p class="law-card-preview">{{ law.plain_english[:120] }}...</p>
+    </div>
+    <span class="law-card-arrow" aria-hidden="true">&rsaquo;</span>
+  </a>
+  {% else %}
+  <p>No laws in this category yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

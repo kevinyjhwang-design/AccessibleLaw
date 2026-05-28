@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Action Guides — Accessible Law{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Action Guides</h1>
+  <p class="page-sub">Step-by-step checklists, timelines, and letters for real-life legal situations.</p>
+</div>
+
+<div class="guide-filters" role="group" aria-label="Filter guides by category">
+  <button class="filter-btn active" data-filter="all">All</button>
+  {% for cat in categories %}
+  <button class="filter-btn" data-filter="{{ cat.slug }}">{{ cat.name }}</button>
+  {% endfor %}
+</div>
+
+<div class="guide-grid" id="guide-grid">
+  {% for g in guides %}
+  <a href="/guide/{{ g.slug }}"
+     class="guide-card"
+     data-category="{{ g.category.slug }}"
+     aria-label="{{ g.title }} — {{ g.subtitle }}">
+    <div class="guide-card-body">
+      <span class="guide-card-cat">{{ g.category.name }}</span>
+      <h2 class="guide-card-title">{{ g.title }}</h2>
+      <p class="guide-card-sub">{{ g.subtitle }}</p>
+      <p class="guide-card-scenario">{{ g.scenario[:120] }}...</p>
+    </div>
+    <span class="guide-card-arrow" aria-hidden="true">&rsaquo;</span>
+  </a>
+  {% else %}
+  <p>No guides available yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const filter = btn.dataset.filter;
+      document.querySelectorAll(".guide-card").forEach(card => {
+        card.hidden = filter !== "all" && card.dataset.category !== filter;
+      });
+    });
+  });
+</script>
+{% endblock %}

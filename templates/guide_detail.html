@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}{{ guide.title }} — Accessible Law{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a> <span aria-hidden="true"> &rsaquo; </span>
+  <a href="/guides">Action Guides</a> <span aria-hidden="true"> &rsaquo; </span>
+  <span aria-current="page">{{ guide.title }}</span>
+</nav>
+
+<article class="guide-article" aria-labelledby="guide-heading">
+
+  <header class="guide-header">
+    <span class="cat-badge">{{ guide.category.name }}</span>
+    <h1 id="guide-heading">{{ guide.title }}</h1>
+    <p class="guide-subtitle">{{ guide.subtitle }}</p>
+    {% if guide.scenario %}
+    <div class="scenario-box">
+      <strong>This guide is for you if:</strong>
+      <p>{{ guide.scenario }}</p>
+    </div>
+    {% endif %}
+  </header>
+
+  {% if timeline %}
+  <section class="guide-section" aria-labelledby="timeline-heading">
+    <h2 id="timeline-heading">Timeline</h2>
+    <ol class="timeline" role="list">
+      {% for item in timeline %}
+      <li class="timeline-item">
+        <span class="timeline-day">{{ item.day }}</span>
+        <span class="timeline-label">{{ item.label }}</span>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+  {% endif %}
+
+  {% if checklist %}
+  <section class="guide-section" aria-labelledby="checklist-heading">
+    <h2 id="checklist-heading">Your Action Checklist</h2>
+    <p class="checklist-sub">Check off each step as you complete it. Your progress is saved in your browser.</p>
+
+    <ul class="checklist" id="checklist-{{ guide.slug }}" role="list">
+      {% for item in checklist %}
+      <li class="checklist-item {% if item.get('warning') %}has-warning{% endif %}"
+          data-index="{{ loop.index0 }}">
+        <label class="check-label">
+          <input type="checkbox" class="check-input" aria-describedby="step-{{ loop.index0 }}-desc" />
+          <span class="check-box" aria-hidden="true"></span>
+          <span class="check-text">{{ item.text }}</span>
+        </label>
+        {% if item.tip %}
+        <p id="step-{{ loop.index0 }}-desc" class="check-tip">{{ item.tip }}</p>
+        {% endif %}
+        {% if item.get('warning') %}
+        <p class="check-warning">{{ item.warning }}</p>
+        {% endif %}
+        {% if item.get('action') == 'letter' %}
+        <button class="btn-secondary btn-sm generate-letter-btn" type="button"
+                data-guide="{{ guide.slug }}">
+          Generate This Letter
+        </button>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="progress-wrap" aria-live="polite">
+      <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+           aria-valuemax="{{ checklist|length }}" aria-label="Checklist progress">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <p id="progress-label" class="progress-label">0 of {{ checklist|length }} steps complete</p>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if guide.letter_template %}
+  <section class="guide-section letter-section" id="letter-section" aria-labelledby="letter-heading">
+    <h2 id="letter-heading">Generate Your Letter</h2>
+    <p>Fill in your details and we'll produce a ready-to-send letter.</p>
+
+    <div class="letter-form" id="letter-form">
+      <div class="lf-grid">
+        <div class="lf-field">
+          <label for="lf-name">Your Full Name</label>
+          <input type="text" id="lf-name" placeholder="Jane Smith" />
+        </div>
+        <div class="lf-field">
+          <label for="lf-address">Your Current Address</label>
+          <input type="text" id="lf-address" placeholder="123 Main St, Birmingham, AL 35203" />
+        </div>
+        <div class="lf-field">
+          <label for="lf-other-name">Other Party's Name</label>
+          <input type="text" id="lf-other-name" placeholder="Landlord / Employer / Client name" />
+        </div>
+        <div class="lf-field">
+          <label for="lf-other-address">Other Party's Address</label>
+          <input type="text" id="lf-other-address" placeholder="456 Oak Ave, Mobile, AL 36602" />
+        </div>
+        <div class="lf-field">
+          <label for="lf-amount">Amount Owed (if applicable)</label>
+          <input type="text" id="lf-amount" placeholder="e.g. $800" />
+        </div>
+        <div class="lf-field">
+          <label for="lf-date">Key Date (move-out, last day worked, etc.)</label>
+          <input type="date" id="lf-date" />
+        </div>
+        <div class="lf-field lf-full">
+          <label for="lf-details">Any other important details</label>
+          <textarea id="lf-details" rows="3"
+            placeholder="e.g. I moved out on June 1st and returned all keys..."></textarea>
+        </div>
+      </div>
+
+      {% if ai_enabled %}
+      <button id="gen-letter-btn" class="btn-primary" data-guide="{{ guide.slug }}" type="button">
+        Generate Letter with AI
+      </button>
+      {% else %}
+      <div class="ai-banner ai-banner--warn" role="alert">
+        AI letter generation requires an <code>ANTHROPIC_API_KEY</code>.
+        Copy the template below and fill it in manually.
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="letter-template-wrap">
+      <h3>Letter Template <span class="template-label">(fill in the [brackets])</span></h3>
+      <div class="letter-output" id="letter-output">
+        <pre class="letter-pre">{{ guide.letter_template }}</pre>
+      </div>
+      <div class="letter-actions">
+        <button class="btn-secondary btn-sm" id="copy-letter-btn">Copy Letter</button>
+        <button class="btn-secondary btn-sm" onclick="window.print()">Print</button>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <div class="help-bar">
+    <p>Still unsure? Get free human help.</p>
+    <div class="help-links">
+      <a href="tel:18664564995" class="btn-primary">Legal Aid Alabama: 1-866-456-4995</a>
+      <a href="/chat" class="btn-secondary">Ask Lex AI</a>
+    </div>
+  </div>
+
+</article>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/guide.js"></script>
+<script>
+  window.GUIDE_SLUG = "{{ guide.slug }}";
+  window.CHECKLIST_TOTAL = {{ checklist|length }};
+</script>
+{% endblock %}

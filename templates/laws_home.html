@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Alabama Laws — Accessible Law{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Alabama Laws by Topic</h1>
+  <p class="page-sub">Plain-English explanations of real Alabama statutes — what they say and what they mean for you.</p>
+</div>
+
+<div class="search-wrap search-wrap--inline" role="search" aria-label="Search laws">
+  <label for="search-input" class="sr-only">Search laws</label>
+  <input id="search-input" type="search"
+    placeholder="Search (e.g. eviction, deposit, overtime...)"
+    autocomplete="off" aria-autocomplete="list" aria-controls="search-results" />
+  <div id="search-results" role="listbox" hidden></div>
+</div>
+
+<div class="category-grid">
+  {% for cat in categories %}
+  <a href="/category/{{ cat.slug }}" class="category-card"
+     aria-label="{{ cat.name }}: {{ cat.description }}">
+    <span class="cat-name">{{ cat.name }}</span>
+    <span class="cat-desc">{{ cat.description }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}
