@@ -1,78 +1,67 @@
-# Accessible Law
+# Accessible Law 🏛️
 
-Most people can't afford a lawyer — but everyone deserves to understand their rights. Accessible Law is a free web app that translates legal documents into plain English, walks you through your options step by step, and lets you ask an AI legal companion anything, anytime.
+![Python](https://img.shields.io/badge/Python-3.12-blue?style=flat-square&logo=python)
+![Flask](https://img.shields.io/badge/Flask-3.0-black?style=flat-square&logo=flask)
+![Gemini](https://img.shields.io/badge/Google_Gemini-AI-orange?style=flat-square&logo=google)
+![PWA](https://img.shields.io/badge/PWA-enabled-purple?style=flat-square)
 
-Built specifically for Alabama residents.
+> Most people can't afford a lawyer, but everyone deserves to understand their rights.
 
----
-
-## What it does
-
-**Translate a document** — Upload a lease, contract, or legal notice and get a plain-English breakdown of every clause. Red flags are highlighted so you know what to watch out for.
-
-**Action Guides** — Step-by-step checklists for real situations: getting your security deposit back, fighting an eviction, disputing unpaid wages, and more. Each guide includes a timeline and a letter generator that writes a ready-to-send letter with your details filled in.
-
-**Ask Lex** — An AI legal companion you can talk to in plain words, any time of day. No legal jargon needed. Lex explains your rights, answers follow-up questions, and points you to next steps.
-
-**Browse Alabama Laws** — Search laws by topic (housing, employment, family, criminal) and read what each law actually means for you — not just what it says.
-
-**Story Match** — Describe your situation and find similar cases where people won, along with how they did it.
+Accessible Law is a free web app for Alabama residents. Upload a contract, get a plain-English breakdown. Follow step-by-step action guides for real situations like evictions and unpaid wages. Or just ask Lex, the AI legal companion, anything you want in plain words.
 
 ---
 
-## Running it locally
+## ✨ Features
 
-**1. Install dependencies**
+| | Feature | What it does |
+|---|---|---|
+| 📄 | **Translation Engine** | Upload a PDF, Word doc, or paste text. Get a plain-English summary, red flags highlighted, and every clause explained simply. |
+| 📋 | **Action Guides** | Step-by-step checklists for evictions, unpaid wages, security deposits, and more. Generates a ready-to-send letter with your details filled in. |
+| 🤖 | **Ask Lex AI** | Chat with an AI legal companion anytime. No legal jargon needed. Powered by Google Gemini. |
+| ⚖️ | **Alabama Law Browser** | Browse laws by topic and read what each one actually means for you. |
+| 🔍 | **Story Match** | Describe your situation and find similar cases where people won. |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
 ```bash
 pip3 install flask flask-sqlalchemy pdfplumber python-docx google-genai
 ```
 
-**2. Get a free Gemini API key**
+### 2. Get a free Gemini API key
+Head to [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and click **Create API key in new project**. Free, no credit card needed.
 
-Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey) → Create API key in new project. It's free, no credit card needed.
-
-**3. Add your key**
+### 3. Add your key
 ```bash
 echo 'GEMINI_API_KEY=your-key-here' > .env
 ```
 
-**4. Set up the database**
+### 4. Seed the database
 ```bash
 python3 seed_data.py
 ```
 
-**5. Start the app**
+### 5. Run it
 ```bash
 source .env && python3 app.py
 ```
 
-Then open [http://localhost:5050](http://localhost:5050).
+Open [http://localhost:5050](http://localhost:5050) and you're in.
 
-> No API key? The app still works — AI features are off, but guides, law browsing, and search all run fine.
-
----
-
-## Stack
-
-| Layer | Tools |
-|---|---|
-| Backend | Python, Flask, SQLite |
-| AI | Google Gemini (`gemini-2.0-flash`) |
-| Document parsing | pdfplumber, python-docx |
-| Frontend | HTML, CSS, Vanilla JS |
-| Real-time chat | Server-Sent Events (SSE) |
-| Offline support | Progressive Web App (PWA) |
+> 💡 No API key? The app still runs. AI features are just turned off.
 
 ---
 
-## Project structure
+## 🗂️ Project Structure
 
 ```
 alabama-legal-aid/
 ├── app.py                  # routes, models, AI calls
 ├── seed_data.py            # populates the database
 ├── requirements.txt
-├── templates/              # Jinja2 HTML templates
+├── templates/              # HTML templates
 │   ├── base.html
 │   ├── index.html
 │   ├── translator.html
@@ -89,17 +78,28 @@ alabama-legal-aid/
     │   ├── chat.js
     │   ├── translator.js
     │   └── guide.js
-    ├── manifest.json
-    └── sw.js
+    ├── manifest.json       # PWA manifest
+    └── sw.js               # service worker
 ```
 
 ---
 
-## Disclaimer
+## 🛠️ Tech Stack
 
-This app provides legal **information**, not legal advice. Lex is not a lawyer. For anything serious, please talk to a real attorney.
+- **Backend** -- Python, Flask, SQLAlchemy, SQLite
+- **AI** -- Google Gemini (`gemini-2.0-flash`)
+- **Document parsing** -- pdfplumber, python-docx
+- **Frontend** -- HTML, CSS, Vanilla JS
+- **Real-time chat** -- Server-Sent Events (SSE)
+- **Offline support** -- Progressive Web App (PWA)
+
+---
+
+## ⚠️ Disclaimer
+
+This app gives legal **information**, not legal advice. Lex is not a lawyer. For anything serious, please talk to a real attorney.
 
 **Free legal help in Alabama:**
-- Legal Aid Alabama — [1-866-456-4995](tel:18664564995)
-- Alabama DV Hotline — [1-800-650-6522](tel:18006506522)
-- National DV Hotline — [1-800-799-7233](tel:18007799233)
+- 📞 Legal Aid Alabama -- [1-866-456-4995](tel:18664564995)
+- 📞 Alabama DV Hotline -- [1-800-650-6522](tel:18006506522)
+- 📞 National DV Hotline -- [1-800-799-7233](tel:18007992733)
