@@ -91,9 +91,15 @@ async function sendMessage() {
         const payload = line.slice(6).trim();
         if (payload === "[DONE]") break;
         try {
-          const { chunk: text } = JSON.parse(payload);
-          fullText += text;
-          lexBubble.innerHTML = formatMessage(fullText);
+          const data = JSON.parse(payload);
+          if (data.error) {
+            lexBubble.innerHTML = `⚠️ ${escapeHtml(data.error)}`;
+            return;
+          }
+          if (data.chunk) {
+            fullText += data.chunk;
+            lexBubble.innerHTML = formatMessage(fullText);
+          }
         } catch {}
       }
     }
