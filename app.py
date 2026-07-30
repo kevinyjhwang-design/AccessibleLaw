@@ -12,11 +12,10 @@ db = SQLAlchemy(app)
 
 # ── Optional AI client (graceful if key is missing) ──────────────────────────
 try:
-    from google import genai as _genai
-    from google.genai import types as _genai_types
-    _gemini_key = os.environ.get("GEMINI_API_KEY", "")
-    if _gemini_key:
-        _ai = _genai.Client(api_key=_gemini_key)
+    from groq import Groq as _Groq
+    _groq_key = os.environ.get("GROQ_API_KEY", "")
+    if _groq_key:
+        _ai = _Groq(api_key=_groq_key)
         AI_ENABLED = True
     else:
         _ai = None
@@ -25,7 +24,7 @@ except ImportError:
     _ai = None
     AI_ENABLED = False
 
-AI_MODEL = "gemini-2.0-flash"
+AI_MODEL = "llama-3.3-70b-versatile"
 
 # ── Document parsers (graceful if libs missing) ──────────────────────────────
 try:
@@ -171,19 +170,17 @@ def extract_text_from_file(file) -> str:
 
 
 def ai_translate(text: str) -> dict:
-    """Call Gemini to translate legal text. Returns parsed JSON dict."""
-    truncated = text[:12000]  # keep within token budget
-    response = _ai.models.generate_content(
+    """Call Groq to translate legal text. Returns parsed JSON dict."""
+    truncated = text[:12000]
+    response = _ai.chat.completions.create(
         model=AI_MODEL,
-        contents=f"Analyze this legal document:\n\n{truncated}",
-        config=_genai_types.GenerateContentConfig(
-            system_instruction=TRANSLATE_SYSTEM,
-            response_mime_type="application/json",
-            max_output_tokens=4096,
-        ),
+        max_tokens=4096,
+        messages=[
+            {"role": "system", "content": TRANSLATE_SYSTEM},
+            {"role": "user", "content": f"Analyze this legal document:\n\n{truncated}"},
+        ],
     )
-    raw = response.text.strip()
-    # Strip accidental markdown fences
+    raw = response.choices[0].message.content.strip()
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -287,7 +284,7 @@ def guide_detail(slug):
 @app.route("/api/generate-letter", methods=["POST"])
 def generate_letter():
     if not AI_ENABLED:
-        return jsonify({"error": "AI not configured. Set GEMINI_API_KEY."}), 503
+        return jsonify({"error": "AI not configured. Set GROQ_API_KEY."}), 503
 
     data      = request.get_json() or {}
     guide_slug= data.get("guide_slug", "")
@@ -304,15 +301,15 @@ def generate_letter():
         "Write the final letter, filling in all details."
     )
     try:
-        response = _ai.models.generate_content(
+        response = _ai.chat.completions.create(
             model=AI_MODEL,
-            contents=prompt,
-            config=_genai_types.GenerateContentConfig(
-                system_instruction=LETTER_SYSTEM,
-                max_output_tokens=1500,
-            ),
+            max_tokens=1500,
+            messages=[
+                {"role": "system", "content": LETTER_SYSTEM},
+                {"role": "user", "content": prompt},
+            ],
         )
-        return jsonify({"letter": response.text.strip()})
+        return jsonify({"letter": response.choices[0].message.content.strip()})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -329,38 +326,31 @@ def chat():
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
     if not AI_ENABLED:
-        return jsonify({"error": "AI not configured. Set GEMINI_API_KEY."}), 503
+        return jsonify({"error": "AI not configured. Set GROQ_API_KEY."}), 503
 
     data     = request.get_json() or {}
-    history  = data.get("history", [])   # [{role, content}]
+    history  = data.get("history", [])
     user_msg = data.get("message", "").strip()
     if not user_msg:
         return jsonify({"error": "Empty message."}), 400
 
-    # Convert history to Gemini format (role: "user"/"model", parts: [...])
-    gemini_history = []
+    messages = [{"role": "system", "content": CHAT_SYSTEM}]
     for msg in history[-10:]:
-        role = "model" if msg["role"] == "assistant" else "user"
-        gemini_history.append(
-            _genai_types.Content(role=role, parts=[_genai_types.Part(text=msg["content"])])
-        )
-    # Append current user message
-    gemini_history.append(
-        _genai_types.Content(role="user", parts=[_genai_types.Part(text=user_msg)])
-    )
+        messages.append({"role": msg["role"], "content": msg["content"]})
+    messages.append({"role": "user", "content": user_msg})
 
     def generate():
         try:
-            for chunk in _ai.models.generate_content_stream(
+            stream = _ai.chat.completions.create(
                 model=AI_MODEL,
-                contents=gemini_history,
-                config=_genai_types.GenerateContentConfig(
-                    system_instruction=CHAT_SYSTEM,
-                    max_output_tokens=1024,
-                ),
-            ):
-                if chunk.text:
-                    yield f"data: {json.dumps({'chunk': chunk.text})}\n\n"
+                max_tokens=1024,
+                messages=messages,
+                stream=True,
+            )
+            for chunk in stream:
+                text = chunk.choices[0].delta.content or ""
+                if text:
+                    yield f"data: {json.dumps({'chunk': text})}\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
         yield "data: [DONE]\n\n"
