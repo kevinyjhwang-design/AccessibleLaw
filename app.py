@@ -1,6 +1,3 @@
-Here it is — copy everything between the lines:
-
-```python
 import json
 import os
 import io
