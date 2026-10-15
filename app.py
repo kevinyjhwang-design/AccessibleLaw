@@ -24,7 +24,7 @@ except ImportError:
     _ai = None
     AI_ENABLED = False
 
-AI_MODEL = "llama-3.3-70b-versatile"
+AI_MODEL = "llama3-8b-8192"
 
 # ── Document parsers (graceful if libs missing) ──────────────────────────────
 try:
