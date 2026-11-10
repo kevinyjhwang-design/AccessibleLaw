@@ -235,7 +235,7 @@ def translate():
 @app.route("/api/translate", methods=["POST"])
 def api_translate():
     if not AI_ENABLED:
-        return jsonify({"error": "AI not configured. Set GEMINI_API_KEY."}), 503
+        return jsonify({"error": "AI not configured. Set GROQ_API_KEY."}), 503
 
     text = ""
     if "file" in request.files and request.files["file"].filename:
